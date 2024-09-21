@@ -7,8 +7,8 @@ def generate_ffmpeg_command(start_time, end_time, input_file, output_file):
     Generate the ffmpeg command based on the given parameters.
     """
     return (
-        f'ffmpeg -ss {start_time} -i "{input_file}" '
-        f"-to {end_time} -c copy -avoid_negative_ts 1 "
+        f'ffmpeg -ss {start_time} -to {end_time} -i "{input_file}" '
+        f"-c copy -avoid_negative_ts 1 "
         f'"{output_file}"\n'
     )
 
