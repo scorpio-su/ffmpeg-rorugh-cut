@@ -1,5 +1,47 @@
 import csv
 import os
+import pandas as pd
+from typing import List
+from room import make_session
+
+
+def create_dataframe(output_file_names: List[str]) -> pd.DataFrame:
+    """
+    Create a DataFrame with the specified output file names.
+    All other fields will be left blank.
+
+    :param output_file_names: List of output file names
+    :return: DataFrame with the required headers and data
+    """
+    data = {
+        "start time": [""] * len(output_file_names),
+        "end time": [""] * len(output_file_names),
+        "input file path": [""] * len(output_file_names),
+        "output file path": [""] * len(output_file_names),
+        "output file name": output_file_names,
+    }
+    return pd.DataFrame(data)
+
+
+def save_dataframe_to_csv(df: pd.DataFrame, csv_file_path: str) -> None:
+    """
+    Save the given DataFrame to a CSV file.
+
+    :param df: DataFrame to be saved
+    :param csv_file_path: Path where the CSV file will be saved
+    """
+    df.to_csv(csv_file_path, index=False)
+
+
+def generate_csv_file(output_file_names: List[str], csv_file_path: str) -> None:
+    """
+    Generate a CSV file based on the provided list of output file names.
+
+    :param output_file_names: List of output file names
+    :param csv_file_path: Path where the CSV file will be saved
+    """
+    df = create_dataframe(output_file_names)  # Create the DataFrame
+    save_dataframe_to_csv(df, csv_file_path)  # Save it as a CSV file
 
 
 def generate_ffmpeg_command(start_time, end_time, input_file, output_file):
@@ -73,8 +115,7 @@ def ask_user_for_os():
             print("Invalid input. Please enter 'w' for Windows or 'l' for Linux/macOS.")
 
 
-# Example usage
-if __name__ == "__main__":
+def main():
     csv_file = "input_data.csv"  # Path to your CSV file
 
     # Ask the user for their operating system
@@ -84,3 +125,25 @@ if __name__ == "__main__":
     output_script_file = "ffmpeg_commands.bat" if is_windows else "ffmpeg_commands.sh"
 
     generate_ffmpeg_commands_from_csv(csv_file, output_script_file, is_windows)
+
+
+def main2():
+    # Get session data
+    sessions_by_day = make_session()
+    output_file_names = []
+    for _, sessions in enumerate(sessions_by_day, start=1):
+        for session in sessions:
+            output_file_names.append(session["zh"]["title"])
+    # print(output_file_names, len(output_file_names))
+
+    csv_file_path = "input_data.csv"
+
+    generate_csv_file(output_file_names, csv_file_path)
+
+
+# Example usage
+if __name__ == "__main__":
+    if 0:
+        main()
+    else:
+        main2()
